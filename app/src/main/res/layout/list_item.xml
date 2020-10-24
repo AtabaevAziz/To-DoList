@@ -7,6 +7,7 @@
 
     <TextView
         android:id="@+id/toDoListTextView"
+        android:textSize="40dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

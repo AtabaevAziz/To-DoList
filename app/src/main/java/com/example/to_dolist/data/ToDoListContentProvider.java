@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
+import com.example.to_dolist.data.ToDoListContract.ListEntry;
 
 public class ToDoListContentProvider extends ContentProvider {
 
@@ -46,9 +47,9 @@ public class ToDoListContentProvider extends ContentProvider {
                 break;
 
             case LIST_ID:
-                selection = ListEntry._ID + "=?";
+                selection = ToDoListContract.ListEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                cursor = db.query(ListEntry.TABLE_NAME, projection, selection,
+                cursor = db.query(ToDoListContract.ListEntry.TABLE_NAME, projection, selection,
                         selectionArgs, null, null, sortOrder);
                 break;
 
@@ -110,9 +111,9 @@ public class ToDoListContentProvider extends ContentProvider {
                 break;
 
             case LIST_ID:
-                selection = ListEntry._ID + "=?";
+                selection = ToDoListContract.ListEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                rowsDeleted = db.delete(ListEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = db.delete(ToDoListContract.ListEntry.TABLE_NAME, selection, selectionArgs);
                 break;
 
             default:

@@ -23,7 +23,7 @@ public class ListCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
 
-        TextView describeTheListTextView = view.findViewById(R.id.describeTheListTextView);
+        TextView describeTheListTextView = view.findViewById(R.id.toDoListTextView);
 
         String describeTheList = cursor.getString(cursor.getColumnIndexOrThrow(ToDoListContract.ListEntry.COLUMN_DESCRIBE_THE_LIST));
 

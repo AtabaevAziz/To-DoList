@@ -30,10 +30,10 @@ public class AddListActivity extends AppCompatActivity
 
 
     private static final int EDIT_MEMBER_LOADER = 111;
-    Uri currentListUri;
+    
 
     private EditText describeTheListEditText;
-
+    private Uri currentListUri;
 
 
     @Override
@@ -54,21 +54,24 @@ public class AddListActivity extends AppCompatActivity
                     null, this);
         }
 
-        describeTheListEditText = findViewById(R.id.dataListView);
+        describeTheListEditText = findViewById(R.id.editText);
+
 
     }
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
         super.onPrepareOptionsMenu(menu);
 
         if (currentListUri == null) {
-            MenuItem menuItem = menu.findItem(R.id.dataListView);
+            MenuItem menuItem = menu.findItem(R.id.delete_list);
             menuItem.setVisible(false);
         }
 
         return true;
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -85,13 +88,14 @@ public class AddListActivity extends AppCompatActivity
                 showDeleteListDialog();
                 return true;
             case android.R.id.home:
-                NavUtils.navigateUpFromSameList(this);
+                NavUtils.navigateUpFromSameTask(this);
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void saveList() {
+
 
         String editText = describeTheListEditText.getText().toString().trim();
 
