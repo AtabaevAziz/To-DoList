@@ -30,9 +30,9 @@ public class AddListActivity extends AppCompatActivity
 
 
     private static final int EDIT_MEMBER_LOADER = 111;
-    Uri currentTaskUri;
+    Uri currentListUri;
 
-    private EditText describeTheTaskEditText;
+    private EditText describeTheListEditText;
 
 
 
@@ -43,13 +43,13 @@ public class AddListActivity extends AppCompatActivity
 
         Intent intent = getIntent();
 
-        currentTaskUri = intent.getData();
+        currentListUri = intent.getData();
 
-        if (currentTaskUri == null) {
-            setTitle("Add a Task");
+        if (currentListUri == null) {
+            setTitle("Add a List");
             invalidateOptionsMenu();
         } else {
-            setTitle("Edit the Task");
+            setTitle("Edit the List");
             getSupportLoaderManager().initLoader(EDIT_MEMBER_LOADER,
                     null, this);
         }
@@ -62,8 +62,8 @@ public class AddListActivity extends AppCompatActivity
 
         super.onPrepareOptionsMenu(menu);
 
-        if (currentTaskUri == null) {
-            MenuItem menuItem = menu.findItem(R.id.delete_list);
+        if (currentListUri == null) {
+            MenuItem menuItem = menu.findItem(R.id.dataListView);
             menuItem.setVisible(false);
         }
 
@@ -72,28 +72,28 @@ public class AddListActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.edit_task_menu,menu);
+        getMenuInflater().inflate(R.menu.edit_list_menu,menu);
         return true;
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.save_task:
-                saveTask();
+            case R.id.save_list:
+                saveList();
                 return  true;
-            case R.id.delete_task:
-                showDeleteTaskDialog();
+            case R.id.delete_list:
+                showDeleteListDialog();
                 return true;
             case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
+                NavUtils.navigateUpFromSameList(this);
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void saveTask() {
+    private void saveList() {
 
-        String editText = describeTheTaskEditText.getText().toString().trim();
+        String editText = describeTheListEditText.getText().toString().trim();
 
         if (TextUtils.isEmpty(editText)) {
             Toast.makeText(this,
@@ -103,11 +103,11 @@ public class AddListActivity extends AppCompatActivity
 
         }
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ToDoListContract.TaskEntry.COLUMN_DESCRIBE_THE_TASK, editText);
+        contentValues.put(ToDoListContract.ListEntry.COLUMN_DESCRIBE_THE_LIST, editText);
 
-        if (currentTaskUri == null) {
+        if (currentListUri == null) {
             ContentResolver contentResolver = getContentResolver();
-            Uri uri = contentResolver.insert(ToDoListContract.TaskEntry.CONTENT_URI,
+            Uri uri = contentResolver.insert(ToDoListContract.ListEntry.CONTENT_URI,
                     contentValues);
 
             if (uri == null) {
@@ -120,7 +120,7 @@ public class AddListActivity extends AppCompatActivity
 
             }
         } else {
-            int rowsChanged = getContentResolver().update(currentTaskUri,
+            int rowsChanged = getContentResolver().update(currentListUri,
                     contentValues, null, null);
 
             if (rowsChanged == 0) {
@@ -129,7 +129,7 @@ public class AddListActivity extends AppCompatActivity
                         Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this,
-                        "Task updated", Toast.LENGTH_LONG).show();
+                        "List updated", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -141,13 +141,13 @@ public class AddListActivity extends AppCompatActivity
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
 
         String[] projection = {
-                ToDoListContract.TaskEntry._ID,
-                ToDoListContract.TaskEntry.COLUMN_DESCRIBE_THE_TASK,
+                ToDoListContract.ListEntry._ID,
+                ToDoListContract.ListEntry.COLUMN_DESCRIBE_THE_LIST,
 
         };
 
         return new CursorLoader(this,
-                currentTaskUri,
+                currentListUri,
                 projection,
                 null,
                 null,
@@ -159,13 +159,13 @@ public class AddListActivity extends AppCompatActivity
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
         if (cursor.moveToFirst()) {
             int firstNameColumIndex = cursor.getColumnIndex(
-                    ToDoListContract.TaskEntry.COLUMN_DESCRIBE_THE_TASK
+                    ToDoListContract.ListEntry.COLUMN_DESCRIBE_THE_LIST
             );
 
 
-            String describeTheTask = cursor.getString(firstNameColumIndex);
+            String describeTheList = cursor.getString(firstNameColumIndex);
 
-            describeTheTaskEditText.setText(describeTheTask);
+            describeTheListEditText.setText(describeTheList);
 
 
 
@@ -177,14 +177,14 @@ public class AddListActivity extends AppCompatActivity
 
     }
 
-    private void showDeleteTaskDialog() {
+    private void showDeleteListDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Do you want delete the member?");
         builder.setPositiveButton("Delete",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        deleteTask();
+                        deleteList();
                     }
                 });
         builder.setNegativeButton("Cancel",
@@ -201,18 +201,18 @@ public class AddListActivity extends AppCompatActivity
 
     }
 
-    private void deleteTask() {
-        if (currentTaskUri != null) {
-            int rowsDeleted = getContentResolver().delete(currentTaskUri,
+    private void deleteList() {
+        if (currentListUri != null) {
+            int rowsDeleted = getContentResolver().delete(currentListUri,
                     null, null);
 
             if (rowsDeleted == 0) {
                 Toast.makeText(this,
-                        "Deleting of task from the table failed",
+                        "Deleting of list from the table failed",
                         Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this,
-                        "Task is deleted",
+                        "List is deleted",
                         Toast.LENGTH_LONG).show();
             }
 

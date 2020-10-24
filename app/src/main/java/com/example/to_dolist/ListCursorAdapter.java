@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.example.to_dolist.data.ToDoListContract;
 
-public class TaskCursorAdapter extends CursorAdapter {
-    public TaskCursorAdapter(Context context, Cursor c, boolean autoRequery) {
+public class ListCursorAdapter extends CursorAdapter {
+    public ListCursorAdapter(Context context, Cursor c, boolean autoRequery) {
         super(context, c, autoRequery);
     }
 
@@ -23,12 +23,12 @@ public class TaskCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
 
-        TextView describeTheTaskTextView = view.findViewById(R.id.describeTheListTextView);
+        TextView describeTheListTextView = view.findViewById(R.id.describeTheListTextView);
 
-        String describeTheTask = cursor.getString(cursor.getColumnIndexOrThrow(ToDoListContract.TaskEntry.COLUMN_DESCRIBE_THE_LIST));
+        String describeTheList = cursor.getString(cursor.getColumnIndexOrThrow(ToDoListContract.ListEntry.COLUMN_DESCRIBE_THE_LIST));
 
 
-        describeTheTaskTextView.setText(describeTheTask);
+        describeTheListTextView.setText(describeTheList);
 
     }
 }

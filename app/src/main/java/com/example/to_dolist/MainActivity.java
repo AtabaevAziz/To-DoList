@@ -22,7 +22,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final int TASK_LOADER = 123;
+    private static final int LIST_LOADER = 123;
     ListCursorAdapter listCursorAdapter;
 
     ListView dataListView;
@@ -58,14 +58,14 @@ public class MainActivity extends AppCompatActivity
                 Intent intent = new Intent(MainActivity.this,
                         AddListActivity.class);
                 Uri currentMemberUri = ContentUris
-                        .withAppendedId(ToDoListContract.TaskEntry.CONTENT_URI, id);
+                        .withAppendedId(ToDoListContract.ListEntry.CONTENT_URI, id);
                 intent.setData(currentMemberUri);
                 startActivity(intent);
 
             }
         });
 
-        getSupportLoaderManager().initLoader(TASK_LOADER,
+        getSupportLoaderManager().initLoader(LIST_LOADER,
                 null, this);
     }
 
@@ -73,13 +73,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         String[] projection = {
-                ToDoListContract.TaskEntry._ID,
-                ToDoListContract.TaskEntry.COLUMN_DESCRIBE_THE_TASK,
+                ToDoListContract.ListEntry._ID,
+                ToDoListContract.ListEntry.COLUMN_DESCRIBE_THE_LIST,
 
         };
 
         CursorLoader cursorLoader = new CursorLoader(this,
-                ToDoListContract.TaskEntry.CONTENT_URI,
+                ToDoListContract.ListEntry.CONTENT_URI,
                 projection,
                 null,
                 null,
