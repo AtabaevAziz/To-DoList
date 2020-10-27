@@ -9,6 +9,8 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -19,21 +21,33 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.to_dolist.R;
 import com.example.to_dolist.data.ToDoListContract;
 
-public class AddListActivity extends AppCompatActivity
+import java.util.Calendar;
+
+public class AddTaskActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>{
 
 
-    private static final int EDIT_MEMBER_LOADER = 111;
+    private static final int EDIT_TASK_LOADER = 111;
     
 
     private EditText describeTheListEditText;
     private Uri currentListUri;
+    private EditText statusEditText;
+    private EditText deadlineEditText;
+
+    int DIALOG_DATE = 1;
+    Calendar calendar = Calendar.getInstance();
+    int myyear = calendar.get(Calendar.YEAR);
+    int month = calendar.get(Calendar.MONTH);
+    int day = calendar.get(Calendar.DAY_OF_MONTH);
 
 
     @Override
@@ -46,17 +60,17 @@ public class AddListActivity extends AppCompatActivity
         currentListUri = intent.getData();
 
         if (currentListUri == null) {
-            setTitle("Add a List");
+            setTitle("Add a Task");
             invalidateOptionsMenu();
         } else {
-            setTitle("Edit the List");
-            getSupportLoaderManager().initLoader(EDIT_MEMBER_LOADER,
+            setTitle("Edit the Task");
+            getSupportLoaderManager().initLoader(EDIT_TASK_LOADER,
                     null, this);
         }
 
         describeTheListEditText = findViewById(R.id.editText);
-
-
+        statusEditText = findViewById(R.id.ediStatus);
+        deadlineEditText = findViewById(R.id.editDeadline);
     }
 
     @Override
@@ -106,12 +120,35 @@ public class AddListActivity extends AppCompatActivity
             return;
 
         }
+
+        String status = statusEditText.getText().toString().trim();
+
+        if (TextUtils.isEmpty(status)) {
+            Toast.makeText(this,
+                    "Input the status",
+                    Toast.LENGTH_LONG).show();
+            return;
+
+        }
+
+        String deadline = deadlineEditText.getText().toString().trim();
+
+        if (TextUtils.isEmpty(deadline)) {
+            Toast.makeText(this,
+                    "Input the deadline",
+                    Toast.LENGTH_LONG).show();
+            return;
+
+        }
+
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ToDoListContract.ListEntry.COLUMN_DESCRIBE_THE_LIST, editText);
+        contentValues.put(ToDoListContract.TaskEntry.COLUMN_DESCRIBE_THE_TASK, editText);
+        contentValues.put(ToDoListContract.TaskEntry.COLUMN_STATUS, status);
+        contentValues.put(ToDoListContract.TaskEntry.COLUMN_DEADLINE, deadline);
 
         if (currentListUri == null) {
             ContentResolver contentResolver = getContentResolver();
-            Uri uri = contentResolver.insert(ToDoListContract.ListEntry.CONTENT_URI,
+            Uri uri = contentResolver.insert(ToDoListContract.TaskEntry.CONTENT_URI,
                     contentValues);
 
             if (uri == null) {
@@ -120,7 +157,7 @@ public class AddListActivity extends AppCompatActivity
                         Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this,
-                        "Data saved", Toast.LENGTH_LONG).show();
+                        "Task saved", Toast.LENGTH_LONG).show();
 
             }
         } else {
@@ -145,8 +182,10 @@ public class AddListActivity extends AppCompatActivity
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
 
         String[] projection = {
-                ToDoListContract.ListEntry._ID,
-                ToDoListContract.ListEntry.COLUMN_DESCRIBE_THE_LIST,
+                ToDoListContract.TaskEntry._ID,
+                ToDoListContract.TaskEntry.COLUMN_DESCRIBE_THE_TASK,
+                ToDoListContract.TaskEntry.COLUMN_STATUS,
+                ToDoListContract.TaskEntry.COLUMN_DEADLINE,
 
         };
 
@@ -162,14 +201,33 @@ public class AddListActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
         if (cursor.moveToFirst()) {
-            int firstNameColumIndex = cursor.getColumnIndex(
-                    ToDoListContract.ListEntry.COLUMN_DESCRIBE_THE_LIST
+            int  taskColumIndex = cursor.getColumnIndex(
+                    ToDoListContract.TaskEntry.COLUMN_DESCRIBE_THE_TASK
             );
 
 
-            String describeTheList = cursor.getString(firstNameColumIndex);
+            String describeTheList = cursor.getString(taskColumIndex);
 
             describeTheListEditText.setText(describeTheList);
+
+            int  statusColumIndex = cursor.getColumnIndex(
+                    ToDoListContract.TaskEntry.COLUMN_STATUS
+            );
+
+
+            String status = cursor.getString(statusColumIndex);
+
+            statusEditText.setText(status);
+
+            int  deadlineIndex = cursor.getColumnIndex(
+                    ToDoListContract.TaskEntry.COLUMN_DEADLINE
+            );
+
+
+            String deadline = cursor.getString(deadlineIndex);
+
+            deadlineEditText.setText(deadline);
+
 
 
 
@@ -183,7 +241,7 @@ public class AddListActivity extends AppCompatActivity
 
     private void showDeleteListDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Do you want delete the member?");
+        builder.setMessage("Do you want delete the task?");
         builder.setPositiveButton("Delete",
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -216,7 +274,7 @@ public class AddListActivity extends AppCompatActivity
                         Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this,
-                        "List is deleted",
+                        "Task is deleted",
                         Toast.LENGTH_LONG).show();
             }
 
@@ -224,4 +282,26 @@ public class AddListActivity extends AppCompatActivity
         }
     }
 
+    public void onChangeDeadline(View view) {showDialog(DIALOG_DATE);
+    }
+
+
+    protected Dialog onCreateDialog(int id) {
+        if (id == DIALOG_DATE) {
+            DatePickerDialog tpd = new DatePickerDialog(this, myCallBack, myyear, month, day);
+            return tpd;
+        }
+        return super.onCreateDialog(id);
+    }
+
+    DatePickerDialog.OnDateSetListener myCallBack = new DatePickerDialog.OnDateSetListener() {
+
+        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                              int dayOfMonth) {
+            myyear = year - 2000;
+            month = monthOfYear + 1;
+            day = dayOfMonth;
+            deadlineEditText.setText(day + "/" + month + "/" + myyear);
+        }
+    };
 }

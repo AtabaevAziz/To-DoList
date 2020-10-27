@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -24,8 +22,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final int LIST_LOADER = 123;
-    ListCursorAdapter listCursorAdapter;
+    private static final int TASK_LOADER = 123;
+    TaskCursorAdapter taskCursorAdapter;
 
     ListView dataListView;
 
@@ -42,15 +40,15 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this,
-                        AddListActivity.class);
+                        AddTaskActivity.class);
                 startActivity(intent);
 
             }
         });
 
-        listCursorAdapter = new ListCursorAdapter(this,
+        taskCursorAdapter = new TaskCursorAdapter(this,
                 null, false);
-        dataListView.setAdapter(listCursorAdapter);
+        dataListView.setAdapter(taskCursorAdapter);
 
         dataListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -58,16 +56,16 @@ public class MainActivity extends AppCompatActivity
                                     int position, long id) {
 
                 Intent intent = new Intent(MainActivity.this,
-                        AddListActivity.class);
-                Uri currentMemberUri = ContentUris
-                        .withAppendedId(ToDoListContract.ListEntry.CONTENT_URI, id);
-                intent.setData(currentMemberUri);
+                        AddTaskActivity.class);
+                Uri currentTaskUri = ContentUris
+                        .withAppendedId(ToDoListContract.TaskEntry.CONTENT_URI, id);
+                intent.setData(currentTaskUri);
                 startActivity(intent);
 
             }
         });
 
-        getSupportLoaderManager().initLoader(LIST_LOADER,
+        getSupportLoaderManager().initLoader(TASK_LOADER,
                 null, this);
     }
 
@@ -75,13 +73,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         String[] projection = {
-                ToDoListContract.ListEntry._ID,
-                ToDoListContract.ListEntry.COLUMN_DESCRIBE_THE_LIST,
+                ToDoListContract.TaskEntry._ID,
+                ToDoListContract.TaskEntry.COLUMN_DESCRIBE_THE_TASK,
+                ToDoListContract.TaskEntry.COLUMN_STATUS,
+                ToDoListContract.TaskEntry.COLUMN_DEADLINE,
 
         };
 
         CursorLoader cursorLoader = new CursorLoader(this,
-                ToDoListContract.ListEntry.CONTENT_URI,
+                ToDoListContract.TaskEntry.CONTENT_URI,
                 projection,
                 null,
                 null,
@@ -93,14 +93,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
 
-        listCursorAdapter.swapCursor(cursor);
+        taskCursorAdapter.swapCursor(cursor);
 
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
 
-        listCursorAdapter.swapCursor(null);
+        taskCursorAdapter.swapCursor(null);
 
     }
 

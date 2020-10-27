@@ -8,22 +8,22 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
-import com.example.to_dolist.data.ToDoListContract.ListEntry;
+import com.example.to_dolist.data.ToDoListContract.TaskEntry;
 
 public class ToDoListContentProvider extends ContentProvider {
 
     ToDoListDbOpenHelper dbOpenHelper;
 
-    private static final int LISTS = 111;
-    private static final int LIST_ID = 222;
+    private static final int TASKS = 111;
+    private static final int TASK_ID = 222;
 
     private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
 
-        uriMatcher.addURI(ToDoListContract.AUTORITY, ToDoListContract.PATH_LISTS, LISTS);
-        uriMatcher.addURI(ToDoListContract.AUTORITY, ToDoListContract.PATH_LISTS
-                + "/#", LIST_ID);
+        uriMatcher.addURI(ToDoListContract.AUTORITY, ToDoListContract.PATH_TASKS, TASKS);
+        uriMatcher.addURI(ToDoListContract.AUTORITY, ToDoListContract.PATH_TASKS
+                + "/#", TASK_ID);
     }
 
     @Override
@@ -35,21 +35,24 @@ public class ToDoListContentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection,
                         String selection, String[] selectionArgs, String sortOrder) {
+
+
+
         SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
         Cursor cursor;
 
         int match = uriMatcher.match(uri);
 
         switch (match) {
-            case LISTS:
-                cursor = db.query(ToDoListContract.ListEntry.TABLE_NAME,projection,selection,
+            case TASKS:
+                cursor = db.query(ToDoListContract.TaskEntry.TABLE_NAME,projection,selection,
                         selectionArgs, null, null, sortOrder);
                 break;
 
-            case LIST_ID:
-                selection = ToDoListContract.ListEntry._ID + "=?";
+            case TASK_ID:
+                selection = ToDoListContract.TaskEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                cursor = db.query(ToDoListContract.ListEntry.TABLE_NAME, projection, selection,
+                cursor = db.query(ToDoListContract.TaskEntry.TABLE_NAME, projection, selection,
                         selectionArgs, null, null, sortOrder);
                 break;
 
@@ -66,9 +69,19 @@ public class ToDoListContentProvider extends ContentProvider {
     @Override
     public Uri insert( Uri uri, ContentValues values) {
 
-        String list = values.getAsString(ListEntry.COLUMN_DESCRIBE_THE_LIST);
-        if (list == null) {
-            throw new IllegalArgumentException("You have to input list");
+        String task = values.getAsString(TaskEntry.COLUMN_DESCRIBE_THE_TASK);
+        if (task == null) {
+            throw new IllegalArgumentException("You have to input task");
+        }
+
+        String status = values.getAsString(TaskEntry.COLUMN_STATUS);
+        if (status == null) {
+            throw new IllegalArgumentException("You have to input status");
+        }
+
+        String deadline = values.getAsString(TaskEntry.COLUMN_DEADLINE);
+        if (deadline == null) {
+            throw new IllegalArgumentException("You have to input deadline");
         }
 
         SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
@@ -76,8 +89,8 @@ public class ToDoListContentProvider extends ContentProvider {
         int match = uriMatcher.match(uri);
 
         switch (match) {
-            case LISTS:
-                long id = db.insert(ListEntry.TABLE_NAME,null,values);
+            case TASKS:
+                long id = db.insert(TaskEntry.TABLE_NAME,null,values);
                 if (id == -1) {
                     Log.e("insertMethod", "Insertion of data in the table failed for " + uri);
                     return null;
@@ -105,15 +118,15 @@ public class ToDoListContentProvider extends ContentProvider {
         int rowsDeleted;
 
         switch (match) {
-            case LISTS:
+            case TASKS:
 
-                rowsDeleted = db.delete(ListEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = db.delete(TaskEntry.TABLE_NAME, selection, selectionArgs);
                 break;
 
-            case LIST_ID:
-                selection = ToDoListContract.ListEntry._ID + "=?";
+            case TASK_ID:
+                selection = ToDoListContract.TaskEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                rowsDeleted = db.delete(ToDoListContract.ListEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = db.delete(ToDoListContract.TaskEntry.TABLE_NAME, selection, selectionArgs);
                 break;
 
             default:
@@ -131,10 +144,24 @@ public class ToDoListContentProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 
-        if (values.containsKey(ListEntry.COLUMN_DESCRIBE_THE_LIST)) {
-            String list = values.getAsString(ListEntry.COLUMN_DESCRIBE_THE_LIST);
+        if (values.containsKey(TaskEntry.COLUMN_DESCRIBE_THE_TASK)) {
+            String list = values.getAsString(TaskEntry.COLUMN_DESCRIBE_THE_TASK);
             if (list == null) {
-                throw new IllegalArgumentException("You have to input list");
+                throw new IllegalArgumentException("You have to input task");
+            }
+        }
+
+        if (values.containsKey(TaskEntry.COLUMN_STATUS)) {
+            String status = values.getAsString(TaskEntry.COLUMN_STATUS);
+            if (status == null) {
+                throw new IllegalArgumentException("You have to input status");
+            }
+        }
+
+        if (values.containsKey(TaskEntry.COLUMN_DEADLINE)) {
+            String deadline = values.getAsString(TaskEntry.COLUMN_DEADLINE);
+            if (deadline == null) {
+                throw new IllegalArgumentException("You have to input deadline");
             }
         }
 
@@ -145,16 +172,16 @@ public class ToDoListContentProvider extends ContentProvider {
         int rowsUpdated;
 
         switch (match) {
-            case LISTS:
+            case TASKS:
 
-                rowsUpdated = db.update(ListEntry.TABLE_NAME, values, selection, selectionArgs);
+                rowsUpdated = db.update(TaskEntry.TABLE_NAME, values, selection, selectionArgs);
 
                 break;
 
-            case LIST_ID:
-                selection = ListEntry._ID + "=?";
+            case TASK_ID:
+                selection = TaskEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                rowsUpdated = db.update(ListEntry.TABLE_NAME, values,
+                rowsUpdated = db.update(TaskEntry.TABLE_NAME, values,
                         selection, selectionArgs);
 
                 break;
@@ -179,16 +206,15 @@ public class ToDoListContentProvider extends ContentProvider {
         int match = uriMatcher.match(uri);
 
         switch (match) {
-            case LISTS:
+            case TASKS:
 
-                return ListEntry.CONTENT_MULTIPLE_ITEMS;
+                return TaskEntry.CONTENT_MULTIPLE_ITEMS;
 
-            case LIST_ID:
-                return ListEntry.CONTENT_SINGLE_ITEM;
+            case TASK_ID:
+                return TaskEntry.CONTENT_SINGLE_ITEM;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
 
         }
     }
-
 }
