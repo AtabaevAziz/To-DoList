@@ -11,8 +11,8 @@ public class ToDoListContract
 
     }
 
-    public static final int DATABASE_VERSION = 3;
-    public static final String DATABASE_NAME = "todo_list";
+    public static final int DATABASE_VERSION = 6;
+    public static final String DATABASE_NAME = "todolist";
 
     public static final String SCHEME = "content://";
     public static final String AUTORITY = "com.example.to_dolist";

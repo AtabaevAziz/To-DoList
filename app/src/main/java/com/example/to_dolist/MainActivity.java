@@ -1,13 +1,20 @@
 package com.example.to_dolist;
 
+import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,13 +33,14 @@ public class MainActivity extends AppCompatActivity
     TaskCursorAdapter taskCursorAdapter;
 
     ListView dataListView;
-
+    CheckBox statusCheckBox;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         dataListView = findViewById(R.id.dataListView);
+        statusCheckBox = findViewById(R.id.statusCheckBox);
 
         FloatingActionButton floatingActionButton =
                 findViewById(R.id.floatingActionButton);
@@ -50,6 +58,7 @@ public class MainActivity extends AppCompatActivity
                 null, false);
         dataListView.setAdapter(taskCursorAdapter);
 
+
         dataListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
@@ -64,6 +73,7 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+
 
         getSupportLoaderManager().initLoader(TASK_LOADER,
                 null, this);

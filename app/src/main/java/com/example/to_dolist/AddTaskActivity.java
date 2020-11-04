@@ -40,7 +40,6 @@ public class AddTaskActivity extends AppCompatActivity
 
     private EditText describeTheListEditText;
     private Uri currentListUri;
-    private EditText statusEditText;
     private EditText deadlineEditText;
 
     int DIALOG_DATE = 1;
@@ -69,7 +68,6 @@ public class AddTaskActivity extends AppCompatActivity
         }
 
         describeTheListEditText = findViewById(R.id.editText);
-        statusEditText = findViewById(R.id.ediStatus);
         deadlineEditText = findViewById(R.id.editDeadline);
     }
 
@@ -121,16 +119,6 @@ public class AddTaskActivity extends AppCompatActivity
 
         }
 
-        String status = statusEditText.getText().toString().trim();
-
-        if (TextUtils.isEmpty(status)) {
-            Toast.makeText(this,
-                    "Input the status",
-                    Toast.LENGTH_LONG).show();
-            return;
-
-        }
-
         String deadline = deadlineEditText.getText().toString().trim();
 
         if (TextUtils.isEmpty(deadline)) {
@@ -143,10 +131,11 @@ public class AddTaskActivity extends AppCompatActivity
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(ToDoListContract.TaskEntry.COLUMN_DESCRIBE_THE_TASK, editText);
-        contentValues.put(ToDoListContract.TaskEntry.COLUMN_STATUS, status);
+        contentValues.put(ToDoListContract.TaskEntry.COLUMN_STATUS, false);
         contentValues.put(ToDoListContract.TaskEntry.COLUMN_DEADLINE, deadline);
 
         if (currentListUri == null) {
+            contentValues.put(ToDoListContract.TaskEntry.COLUMN_STATUS, false);
             ContentResolver contentResolver = getContentResolver();
             Uri uri = contentResolver.insert(ToDoListContract.TaskEntry.CONTENT_URI,
                     contentValues);
@@ -170,7 +159,7 @@ public class AddTaskActivity extends AppCompatActivity
                         Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this,
-                        "List updated", Toast.LENGTH_LONG).show();
+                        "Task updated", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -210,14 +199,14 @@ public class AddTaskActivity extends AppCompatActivity
 
             describeTheListEditText.setText(describeTheList);
 
-            int  statusColumIndex = cursor.getColumnIndex(
-                    ToDoListContract.TaskEntry.COLUMN_STATUS
-            );
-
-
-            String status = cursor.getString(statusColumIndex);
-
-            statusEditText.setText(status);
+//            int  statusColumIndex = cursor.getColumnIndex(
+//                    ToDoListContract.TaskEntry.COLUMN_STATUS
+//            );
+//
+//
+//            String status = cursor.getString(statusColumIndex);
+//
+//            statusEditText.setText(status);
 
             int  deadlineIndex = cursor.getColumnIndex(
                     ToDoListContract.TaskEntry.COLUMN_DEADLINE

@@ -74,10 +74,10 @@ public class ToDoListContentProvider extends ContentProvider {
             throw new IllegalArgumentException("You have to input task");
         }
 
-        String status = values.getAsString(TaskEntry.COLUMN_STATUS);
-        if (status == null) {
-            throw new IllegalArgumentException("You have to input status");
-        }
+//        Boolean status = values.getAsBoolean(TaskEntry.COLUMN_STATUS);
+//        if (status == null) {
+//            throw new IllegalArgumentException("You have to input status");
+//        }
 
         String deadline = values.getAsString(TaskEntry.COLUMN_DEADLINE);
         if (deadline == null) {

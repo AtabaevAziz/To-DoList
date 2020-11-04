@@ -1,12 +1,18 @@
 package com.example.to_dolist;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.to_dolist.data.ToDoListContract;
 
@@ -21,21 +27,53 @@ public class TaskCursorAdapter extends CursorAdapter {
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+    public void bindView(View view, final Context context, final Cursor cursor) {
 
         TextView taskTextView = view.findViewById(R.id.taskTextView);
         String task = cursor.getString(cursor.getColumnIndexOrThrow(ToDoListContract.TaskEntry.COLUMN_DESCRIBE_THE_TASK));
         taskTextView.setText(task);
 
-        TextView statusTextView = view.findViewById(R.id.statusTextView);
+        CheckBox statusCheckBox = view.findViewById(R.id.statusCheckBox);
         String status = cursor.getString(cursor.getColumnIndexOrThrow(ToDoListContract.TaskEntry.COLUMN_STATUS));
-        statusTextView.setText(status);
+        if (status.equals("1")) {
+          statusCheckBox.setChecked(true);
+        } else {
+          statusCheckBox.setChecked(false);
+        }
 
         TextView deadlineTextView = view.findViewById(R.id.deadlineTextView);
         String deadline = cursor.getString(cursor.getColumnIndexOrThrow(ToDoListContract.TaskEntry.COLUMN_DEADLINE));
         deadlineTextView.setText(deadline);
 
+        final Context ctx = context;
+        final int id = cursor.getInt(cursor.getColumnIndex(ToDoListContract.TaskEntry._ID));
 
+        statusCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                String selection = ToDoListContract.TaskEntry._ID + "=?";
+                String itemIDArgs = Integer.toString(id);
+                String[] selectionArgs = {itemIDArgs};
 
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(ToDoListContract.TaskEntry.COLUMN_STATUS, isChecked);
+
+                ctx.getContentResolver().update(
+                        Uri.withAppendedPath(ToDoListContract.TaskEntry.CONTENT_URI, Integer.toString(id)),
+                        contentValues,
+                        selection, selectionArgs);
+                if (isChecked) {
+                    Toast.makeText(ctx,
+                            "CHECKED",
+                            Toast.LENGTH_LONG).show();
+                    return;
+                } else {
+                    Toast.makeText(ctx,
+                            "UNCHECKED",
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+        });
     }
 }
