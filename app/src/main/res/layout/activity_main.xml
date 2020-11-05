@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/list_image"
-    tools:context=".MainActivity">
+    android:background="#2196F3"
+    tools:context=".MainActivity"
+    android:orientation="horizontal">
 
     <ListView
         android:id="@+id/dataListView"
@@ -25,7 +26,7 @@
         android:layout_marginEnd="40dp"
         android:layout_marginBottom="40dp"
         android:clickable="true"
-        app:backgroundTint="#80000000"
+        app:backgroundTint="#000000"
         app:srcCompat="@drawable/ic_baseline_library_add_24"
         tools:ignore="VectorDrawableCompat" />
 </RelativeLayout>
