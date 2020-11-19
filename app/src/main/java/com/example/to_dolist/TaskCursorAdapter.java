@@ -1,11 +1,15 @@
 package com.example.to_dolist;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -14,7 +18,11 @@ import android.widget.CursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.example.to_dolist.data.ToDoListContract;
+
+import java.util.Date;
 
 public class TaskCursorAdapter extends CursorAdapter {
     public TaskCursorAdapter(Context context, Cursor c, boolean autoRequery) {
@@ -58,22 +66,29 @@ public class TaskCursorAdapter extends CursorAdapter {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(ToDoListContract.TaskEntry.COLUMN_STATUS, isChecked);
 
+                if (isChecked) {
+                    contentValues.put(ToDoListContract.TaskEntry.COLUMN_TASK_DONE_DATE, new Date().toString());
+
+                    Toast.makeText(ctx,
+                            "CHECKED",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    contentValues.put(ToDoListContract.TaskEntry.COLUMN_TASK_DONE_DATE, "");
+                    Toast.makeText(ctx,
+                            "UNCHECKED",
+                            Toast.LENGTH_LONG).show();
+                }
+
                 ctx.getContentResolver().update(
                         Uri.withAppendedPath(ToDoListContract.TaskEntry.CONTENT_URI, Integer.toString(id)),
                         contentValues,
                         selection, selectionArgs);
-                if (isChecked) {
-                    Toast.makeText(ctx,
-                            "CHECKED",
-                            Toast.LENGTH_LONG).show();
-                    return;
-                } else {
-                    Toast.makeText(ctx,
-                            "UNCHECKED",
-                            Toast.LENGTH_LONG).show();
-                    return;
-                }
+                return;
+
             }
         });
+
+
     }
+
 }

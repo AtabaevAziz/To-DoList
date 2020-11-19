@@ -133,6 +133,7 @@ public class AddTaskActivity extends AppCompatActivity
         contentValues.put(ToDoListContract.TaskEntry.COLUMN_DESCRIBE_THE_TASK, editText);
         contentValues.put(ToDoListContract.TaskEntry.COLUMN_STATUS, false);
         contentValues.put(ToDoListContract.TaskEntry.COLUMN_DEADLINE, deadline);
+        contentValues.put(ToDoListContract.TaskEntry.COLUMN_TASK_DONE_DATE, "");
 
         if (currentListUri == null) {
             contentValues.put(ToDoListContract.TaskEntry.COLUMN_STATUS, false);
@@ -175,6 +176,7 @@ public class AddTaskActivity extends AppCompatActivity
                 ToDoListContract.TaskEntry.COLUMN_DESCRIBE_THE_TASK,
                 ToDoListContract.TaskEntry.COLUMN_STATUS,
                 ToDoListContract.TaskEntry.COLUMN_DEADLINE,
+                ToDoListContract.TaskEntry.COLUMN_TASK_DONE_DATE,
 
         };
 
