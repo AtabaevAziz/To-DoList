@@ -5,16 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#2196F3"
-    tools:context=".MainActivity"
-    android:orientation="horizontal">
+    android:id="@+id/history"
+    tools:context=".HistoryActivity">
 
-    <ListView
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/recyclerview_background"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:visibility="visible" />-->
+
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/historyListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="160dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="0dp" />
+        android:layout_marginTop="100dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 </RelativeLayout>
